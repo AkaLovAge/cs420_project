@@ -1,3 +1,8 @@
+/*
+* a parallel huge matrix txt writer.
+* M is the row number 
+* N is the column number 
+*/
 #include <stdlib.h>
 #include <stdio.h>
 #include "mpi.h"
