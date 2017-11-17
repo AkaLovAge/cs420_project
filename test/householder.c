@@ -2,7 +2,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <matrix.h>
-
+/*
 void householder(mat *m, mat *R, mat *Q)
 {
     int i,j,k;
@@ -56,25 +56,32 @@ void householder(mat *m, mat *R, mat *Q)
     R = tmp3;
     matrix_show(tmp5);
 }
+*/
 int main(int argc, char* argv[])
 {
-    double in[][3] = {
-    	{ -1, -1, 1},
-	{  1, 3, 3},
-	{ -1, -1, 5},
-	{ 1, 3, 7},
+    double in[][7] = {
+    	{ -1, -1, 1,23,45,3,4},
+	{  1, 3, 3,3,4,5,2},
+	{ -1, -1, 5,2,3,4,5},
+	{ 1, 3, 7,2,3,5,6},
     };
-    mat* x = matrix_init(4,3);
+    mat* x = matrix_init(4,7);
     int i,j,k;
     for (i=0;i<4;i++)
     {
-    	for(j=0;j<3;j++)
+    	for(j=0;j<7;j++)
 	{
 	     x->m[i][j] = in[i][j];
 	}
     }
+    matrix_show(x);
     mat *R,*Q;
-    householder(x,R,Q);
+    get_QR_mn(x,0,2,0,2,&R,&Q);
+    matrix_show(R);
+    matrix_show(Q);
+    //householder(x,R,Q);
     matrix_free(x);
+    matrix_free(Q);
+    matrix_free(R);
 }
 

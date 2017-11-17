@@ -7,8 +7,12 @@
 #PBS -e err-${PBS_JOBID%%.*}.txt
 
 cd ${PBS_O_WORKDIR}
+ulimit -s unlimited
 
-module load papi
+
+module load intel/17.0
 module load mvapich2/2.2-intel-17.0
 
-mpiexec -np 4 ./a.out
+export OMP_NUM_THREADS = 8
+
+mpiexec -np 8 ./bin/2d_omp

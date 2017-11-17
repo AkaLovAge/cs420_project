@@ -10,7 +10,7 @@ mat* matrix_init(int row, int col);
 
 mat* matrix_copy(int row, int col,mat* input);
 
-double* get_col(mat* input,int n);
+double* get_col(mat* input,int n, int n1, int n2);
 
 void matrix_transpose(mat * input);
 
@@ -20,7 +20,9 @@ void vector_mul(double *a, double s, int n);
 
 void matrix_add(mat* a, mat* b);
 
-mat* matrix_mul(mat* input1, mat* input2);
+mat* matrix_mul4(mat* input1, mat* input2,int n1, int n2, int m1, int m2);
+
+mat* matrix_mul2(mat* input1, mat* input2);
 
 mat * matrix_reflector(mat *a, int n);
 
@@ -32,4 +34,4 @@ void matrix_free(mat* input);
 
 void matrix_show(mat *m);
 
-
+void get_QR_mn(mat*m, int n1, int n2, int m1, int m2, mat **R, mat **Q);
