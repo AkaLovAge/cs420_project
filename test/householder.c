@@ -2,6 +2,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <matrix.h>
+#include "tile_matrix.h"
 /*
 void householder(mat *m, mat *R, mat *Q)
 {
@@ -59,29 +60,36 @@ void householder(mat *m, mat *R, mat *Q)
 */
 int main(int argc, char* argv[])
 {
-    double in[][7] = {
-    	{ -1, -1, 1,23,45,3,4},
-	{  1, 3, 3,3,4,5,2},
-	{ -1, -1, 5,2,3,4,5},
-	{ 1, 3, 7,2,3,5,6},
+    double in[8][8] = {
+    	{ -1, -1, 1,23,45,3,4,4},
+	    {  1, 3, 3,3,4,5,2,5},
+	    { -1, -1, 5,2,3,4,5,6},
+	    { 1, 3, 7,2,3,5,6,7},
+        { -1, -1, 1,23,45,3,4,4},
+        {  1, 3, 3,3,4,5,2,5},
+        { -1, -1, 5,2,3,4,5,6},
+        { 1, 3, 7,2,3,5,6,7},
     };
-    mat* x = matrix_init(4,7);
+    double **in1 = malloc(sizeof(double *)*8);
     int i,j,k;
-    for (i=0;i<4;i++)
+    for (i=0;i<8;i++)
     {
-    	for(j=0;j<7;j++)
-	{
-	     x->m[i][j] = in[i][j];
-	}
+        in1[i] = malloc(sizeof(double)*8);
+        for(j=0;j<8;j++)
+        {
+            in1[i][j] = in[i][j];
+        }
     }
-    matrix_show(x);
-    mat *R,*Q;
-    get_QR_mn(x,0,2,0,2,&R,&Q);
-    matrix_show(R);
-    matrix_show(Q);
-    //householder(x,R,Q);
-    matrix_free(x);
-    matrix_free(Q);
-    matrix_free(R);
+    mat_tile * m = tile_init(8,8,2,2);
+
+    matrix2tiled(m, in1);
+
+    show_tile_matrix(m);
+
+    mat_tile* m1 = tile_matrix_copy(m);
+
+    show_tile_matrix(m1);
+    matrix_tile_free(m);
+    matrix_tile_free(m1);
 }
 

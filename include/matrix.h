@@ -1,3 +1,6 @@
+#ifndef MATRIX_H
+#define MATRIX_H
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -35,3 +38,5 @@ void matrix_free(mat* input);
 void matrix_show(mat *m);
 
 void get_QR_mn(mat*m, int n1, int n2, int m1, int m2, mat **R, mat **Q);
+
+#endif
