@@ -43,13 +43,13 @@ mat* matrix_copy(int row, int col,mat* input)
 
 // get nth column of matrix, return a malloc double list
 
-double* get_col(mat* input,int n, int n1, int n2)
+double* get_col(mat* input,int n)
 {
     int row = input->row;
     double *tmp = malloc(sizeof(double)*row);
     int i;
 
-    for (i=n1; i<n2+1; i++)
+    for (i=0; i<row; i++)
     {
         tmp[i] = input->m[i][n];
     }
@@ -249,14 +249,14 @@ void matrix_free(mat* input)
 
 // householder return R and Q matrix, must input which block is included, from n1,m1 to n2,m2 
 
-void get_QR_mn(mat *m, int n1, int n2, int m1, int m2, mat **R, mat **Q)
+void get_QR_mn(mat *m, mat **H, mat **Q)
 {
     int i,j,k;
-    mat* q[n2-n1];
+    mat* q[m->row];
     mat *tmp1 = m;
     mat *tmp2;
-    int row = n2- n1+1;
-    int col = m2- m1+1;
+    int row = m->row;
+    int col = m->col;
 
     double *e = malloc(sizeof(double)*row);
     double *n_col;
@@ -268,7 +268,7 @@ void get_QR_mn(mat *m, int n1, int n2, int m1, int m2, mat **R, mat **Q)
         if (tmp1 != m) matrix_free(tmp1);
 
         tmp1 = tmp2;
-        n_col = get_col(tmp1 , i, n1,n2);
+        n_col = get_col(tmp1 , i);
         n_norm = vnorm(n_col,row);
         n_norm = (m->m[i][i]<0) ? -n_norm : n_norm;
 
@@ -282,7 +282,7 @@ void get_QR_mn(mat *m, int n1, int n2, int m1, int m2, mat **R, mat **Q)
 
         q[i] = I_mul(n_col, row);
         
-        tmp2 = matrix_mul4(q[i],tmp1,n1,n2,m1,m2);
+        tmp2 = matrix_mul2(q[i],tmp1);
         free(n_col);
 
         matrix_show(q[i]);
@@ -297,14 +297,11 @@ void get_QR_mn(mat *m, int n1, int n2, int m1, int m2, mat **R, mat **Q)
      matrix_free(tmp1);
      mat* tmp5 = q[0];
      
-     for (i=0;i<n2-n1;i++)
-        matrix_show(q[i]);
-
      for(i=0; i<row-1 && i<col; i++)
      {
         if (i!=0) tmp5=matrix_mul2(tmp5, q[i]);
      }
-     *R = matrix_copy(tmp5->row, tmp5->col,tmp5);
+     *H = matrix_copy(tmp5->row, tmp5->col,tmp5);
 }
 
 // show the mat 

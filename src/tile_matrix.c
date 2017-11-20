@@ -73,7 +73,8 @@ void show_tile_matrix(mat_tile* m)
 void matrix2tiled(mat_tile* m, double** rm )
 {
     int i,j,k;
-    int tmp1 , tmp2;
+    int tmp1,tmp2;
+
     for (i=0;i<m->num;i++)
     {
         tmp1 = (i%m->row)*m->sub_row;
@@ -109,40 +110,5 @@ mat_tile* tile_matrix_copy(mat_tile* m)
     }
     return new_m;
 }
-
-/*double* get_col(double ** m, int n_col, int row)
-{
-    int i,j;
-    double *tmp = malloc(sizeof(double)*row);
-
-    for (i=0;i<row;i++)
-    {
-        tmp[i] = m[i][n_col];
-    }
-    return tmp;
-}
-
-// matrix a = a + b
-
-void tile_matrix_add(double **a, double **b, int n, int m)
-{
-    int i,j;
-    for (i=0;i<n,i++)
-    {
-        for(j=0;j<m;j++)
-        {
-            a[i][j] += b[i][j];
-        }
-    }
-}
-
-// matrix a*b 
-
-double ** matrix_mul (double **a, double **b, int a_row, int a_col, int b_row, int b_col )
-{
-    int i,j,k;
-    double 
-}*/
-
 
 

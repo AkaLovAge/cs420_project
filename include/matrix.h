@@ -13,7 +13,7 @@ mat* matrix_init(int row, int col);
 
 mat* matrix_copy(int row, int col,mat* input);
 
-double* get_col(mat* input,int n, int n1, int n2);
+double* get_col(mat* input,int n);
 
 void matrix_transpose(mat * input);
 
@@ -37,6 +37,6 @@ void matrix_free(mat* input);
 
 void matrix_show(mat *m);
 
-void get_QR_mn(mat*m, int n1, int n2, int m1, int m2, mat **R, mat **Q);
+void get_QR(mat*m, mat **R, mat **Q);
 
 #endif

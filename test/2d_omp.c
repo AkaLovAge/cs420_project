@@ -20,15 +20,16 @@ void MPI_check(char str[], int error)
 int main (int argc, char* argv[])
 {
     int i,j,k;
-    mat* A = matrix_init(N,M);
-    
+    double ** a = malloc(sizeof(double*)*N);
     for (i=0;i<N;i++)
     {
-        for (j=0; j<M; j++)
-        {
-            A->m[i][j] = (double)rand()/((double)RAND_MAX/10);
-        }
+        a[i] = malloc(sizeof(double)*M);
+        for (j=0;j<M;j++)
+            a[i][j] = i;
     }
+    mat_tile* A = tile_init(N,M,2,8);
+    matrix2tiled(A,a);
+    show_tile_matrix(A);
     #pragma omp parallel
     {
         int threads_num,thread_id;
@@ -41,11 +42,7 @@ int main (int argc, char* argv[])
         mat *Q;
         #pragma omp single 
         {
-            int m = M/threads_num -1;
-            int n = N/threads_num -1;
-            printf("the %d thread go for %d,%d\n",thread_id,n,m);
-
-            get_QR_mn(A, 0, n, 0, m, &H, &Q);
+            //get_QR_mn(A, 0, n, 0, m, &H, &Q);
         }
     //    #pragma omp for schedule (auto) private(i,j,k)
     //    {
