@@ -23,4 +23,8 @@ void matrix2tiled(mat_tile* m, double **rm);
 
 mat_tile* tile_matrix_copy(mat_tile* m);
 
+mat* tile_merge(mat_tile* m, int num1, int num2);
+
+void set_mul_value(mat_tile* mt, mat* m, int index[], int num);
+
 #endif

@@ -39,4 +39,6 @@ void matrix_show(mat *m);
 
 void get_QR(mat*m, mat **R, mat **Q);
 
+void set_value(mat* a, mat* b);
+
 #endif

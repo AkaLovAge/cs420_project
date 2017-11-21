@@ -20,6 +20,19 @@ mat* matrix_init(int row, int col)
     return new_ma;
 }
 
+// set matrix a value to matrix b 
+
+void set_value(mat *a, mat *b)
+{
+    if (a->row != b->row || a->col != b->col)
+    {
+        int i;
+        for (i=0;i<(a->row)*(a->col);i++)
+        {
+            a->m[0][i] = b->m[0][i];
+        }
+    }
+}
 // copy input mat to new mat
 
 mat* matrix_copy(int row, int col,mat* input)
@@ -123,12 +136,35 @@ void matrix_add(mat* a, mat* b)
             }                                   
         }                                               
     }                                                       
-}                   
+}
+// mat a = mat a * mat b
+/*void matrix_mul(mat *a, mat *b)
+{
+    int i,j,k;
+    mat* result = matrix_init(input1->row,input2->col);
+    if (a->col == b->row)
+    {
+         for (i=0;i<a->row;i++)
+         {
+             for(j=0;j<b->col;j++)
+             {
+                 double tmp = 0;
+                 for(k=0;k<b->col;k++)
+                 {
+                     tmp = tmp + (input1->m[i][k])*(input2->m[k][j]);
+                 }
+                 result->m[i][j] = tmp;
+             }
+        }
+    }
+}
+*/
 // regular mat a * mat b
 mat* matrix_mul2(mat* input1, mat* input2)
 {
     int i,j,k;
     mat* result = matrix_init(input1->row,input2->col);
+  
     if (input1->col == input2->row)
     {
         for (i=0;i<input1->row;i++)
@@ -247,9 +283,16 @@ void matrix_free(mat* input)
     }
 }
 
+// only free the data in matrix 
+
+//void matrix_data_free(mat *input)
+//{
+//    if (input-> && input ->)
+//}
+
 // householder return R and Q matrix, must input which block is included, from n1,m1 to n2,m2 
 
-void get_QR_mn(mat *m, mat **H, mat **Q)
+void get_QR(mat *m, mat **H, mat **Q)
 {
     int i,j,k;
     mat* q[m->row];
@@ -285,23 +328,25 @@ void get_QR_mn(mat *m, mat **H, mat **Q)
         tmp2 = matrix_mul2(q[i],tmp1);
         free(n_col);
 
-        matrix_show(q[i]);
+        //matrix_show(q[i]);
 
         if (tmp1 != m) matrix_free(tmp1);
 
         tmp1 = tmp2;
-
      }
 
      free(e);
      matrix_free(tmp1);
      mat* tmp5 = q[0];
-     
-     for(i=0; i<row-1 && i<col; i++)
+     mat* tmp4;
+     for(i=1; i<row && i<col; i++)
      {
-        if (i!=0) tmp5=matrix_mul2(tmp5, q[i]);
+        tmp4 = tmp5;
+        tmp5=matrix_mul2(q[i], tmp5);
+        matrix_free(tmp4);
      }
      *H = matrix_copy(tmp5->row, tmp5->col,tmp5);
+     matrix_free(tmp5);
 }
 
 // show the mat 
@@ -309,6 +354,7 @@ void get_QR_mn(mat *m, mat **H, mat **Q)
 void matrix_show(mat *m)
 {
     int i,j;
+    printf("row:%d,col:%d\n",m->row,m->col);
     for (i=0;i<m->row;i++)
     {
         for(j=0;j<m->col;j++)
