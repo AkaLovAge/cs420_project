@@ -295,23 +295,42 @@ void matrix_free(mat* input)
 void get_QR(mat *m, mat **H, mat **Q)
 {
     int i,j,k;
-    mat* q[m->row];
-    mat *tmp1 = m;
-    mat *tmp2;
     int row = m->row;
     int col = m->col;
+    int l_r = row , l_c = col;
+    int p_size = 0;
+    if (row == col)
+    {
+        p_size = (m->row < m->col)? (m->row-1): (m->col-1);
+ //       l_r = row-1;
+ //       l_c = col-1;
+
+    }else{
+        p_size = (row < col)? row:col;
+    }
+    
+    mat *q[p_size];
+    mat *tmp1 = m;
+    mat *tmp2;
 
     double *e = malloc(sizeof(double)*row);
     double *n_col;
     double n_norm;
 
-    for(i=0;i<row-1 && i<col; i++)
+    for(i=0;i<l_r && i<l_c; i++)
     {
         tmp2 = matrix_reflector(tmp1,i);
         if (tmp1 != m) matrix_free(tmp1);
 
         tmp1 = tmp2;
         n_col = get_col(tmp1 , i);
+ //        for (j=0;j<row;j++)
+ //                        printf("%f,",n_col[j]);
+
+   //                              printf("\n");
+   //     for (j=0;j<row;j++)
+   //         printf("%f,",n_col[j]);
+   //     printf("\n");
         n_norm = vnorm(n_col,row);
         n_norm = (m->m[i][i]<0) ? -n_norm : n_norm;
 
@@ -322,29 +341,36 @@ void get_QR(mat *m, mat **H, mat **Q)
         
         n_norm = vnorm(n_col,row);
         vector_mul(n_col, (double)1/n_norm, row);
+  //      printf("n\n");
+ //       for (j=0;j<row;j++)
+ //           printf("%f,",n_col[j]);
+
+   //     printf("\n");
 
         q[i] = I_mul(n_col, row);
-        
+  //      matrix_show(q[i]);   
         tmp2 = matrix_mul2(q[i],tmp1);
         free(n_col);
-
-        //matrix_show(q[i]);
+    
+//        printf ("%d\n",i);
+ //       matrix_show(q[i]);
 
         if (tmp1 != m) matrix_free(tmp1);
 
         tmp1 = tmp2;
      }
-
      free(e);
      matrix_free(tmp1);
      mat* tmp5 = q[0];
      mat* tmp4;
-     for(i=1; i<row && i<col; i++)
+   //  matrix_show(tmp5);
+     for(i=1; i<l_r && i<l_c; i++)
      {
         tmp4 = tmp5;
         tmp5=matrix_mul2(q[i], tmp5);
         matrix_free(tmp4);
      }
+  //   matrix_show(tmp5);
      *H = matrix_copy(tmp5->row, tmp5->col,tmp5);
      matrix_free(tmp5);
 }
@@ -359,7 +385,7 @@ void matrix_show(mat *m)
     {
         for(j=0;j<m->col;j++)
         {
-            printf("%f,",m->m[i][j]);
+            printf("%.12f,",m->m[i][j]);
         }
         printf("\n");
     }

@@ -65,7 +65,6 @@ void set_mul_value(mat_tile* mt, mat* m, int index[], int num)
 
     for (i=0;i<num;i++)
     {
-        printf("%d,%d\n",i,index[i]);
         for (j=0;j<row;j++)
         {
             for(k=0;k<col;k++)

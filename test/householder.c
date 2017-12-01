@@ -15,7 +15,8 @@ void householder(mat *m, mat *R, mat *Q)
     double *n_col;
     double n_norm;
     for (i=0;i<m->row && i<m->col; i++)
-    {
+    {:Wq
+
     	
     	tmp2 = matrix_reflector(tmp1,i);
 
@@ -60,22 +61,22 @@ void householder(mat *m, mat *R, mat *Q)
 */
 int main(int argc, char* argv[])
 {
-    double in[8][8] = {
-    	{ -1, -1, 1,23,45,3,4,4},
-	    {  1, 3, 3,3,4,5,2,5},
-	    { -1, -1, 5,2,3,4,5,6},
-	    { 1, 3, 7,2,3,5,6,7},
-        { -1, -1, 1,23,45,3,4,4},
-        {  1, 3, 3,3,4,5,2,5},
-        { -1, -1, 5,2,3,4,5,6},
-        { 1, 3, 7,2,3,5,6,7},
+    double in[8][4] = {
+        {1,2,3,4},
+        {0,3,4,5},
+        {0,0,3,4},
+        {0,0,0,5},
+        {1,2,3,1},
+        {2,3,4,1},
+        {4,3,1,4},
+        {5,6,7,8}
     };
     double **in1 = malloc(sizeof(double *)*8);
     int i,j,k;
     for (i=0;i<8;i++)
     {
-        in1[i] = malloc(sizeof(double)*8);
-        for(j=0;j<8;j++)
+        in1[i] = malloc(sizeof(double)*4);
+        for(j=0;j<4;j++)
         {
             in1[i][j] = in[i][j];
         }

@@ -30,34 +30,35 @@ int main (int argc, char* argv[])
     {
         a[i] = malloc(sizeof(double)*M);
         for (j=0;j<M;j++)
-            a[i][j] = (float)rand()/((float)RAND_MAX/10);
+            a[i][j] = (double)rand()/((double)RAND_MAX/100);
     }
 
     mat_tile* A = tile_init(N,M,tile_n,tile_m);
     matrix2tiled(A,a);
-    
+  
     mat *H;
     mat *Q;
-   
     for (i=0; i<tile_n && i<tile_m; i++)
     {    
         get_QR(A->m[i+i*tile_m], &H, &Q);
-
-        mat *tt = matrix_mul2(H,A->m[i+i*tile_m]);
+        
+        matrix_show(H);
+//        mat *tt = matrix_mul2(H,A->m[i+i*tile_m]);
    
         omp_set_num_threads(tile_m-i);
+        
         #pragma omp parallel shared(A,H)
         {
             int threads_num,thread_id;
             thread_id = omp_get_thread_num();
             threads_num = omp_get_num_threads();
-        
-/*        #pragma omp critical
-        {
-            printf ("this is thread %d\n",thread_id);
-            matrix_show(A->m[thread_id]);
-        }
-*/
+            
+//            #pragma omp critical
+//            {
+//                printf ("this is thread %d\n",thread_id);
+//                matrix_show(H);
+//                printf("\n");
+//            }
             mat* tmp_matrix = matrix_mul2(H,A->m[i+thread_id]);
             matrix_free(A->m[i+thread_id]);
             A->m[i+thread_id] = tmp_matrix;
@@ -74,15 +75,26 @@ int main (int argc, char* argv[])
     
             get_QR(merged,&H,&Q);
             matrix_free(merged);
-
+        
+            omp_set_num_threads(tile_m-i);
             #pragma omp parallel shared(A,H)
             {
                 int threads_num,thread_id;
                 thread_id = omp_get_thread_num();
                 threads_num = omp_get_num_threads();
         
-                mat* new_merged = tile_merge(A,thread_id,thread_id+A->row);
+                mat* new_merged = tile_merge(A,thread_id,thread_id+A->col);
                 mat* tmp_matrix = matrix_mul2(H,new_merged);
+ /*               #pragma omp critical
+                {
+                    printf ("this is thread %d\n",thread_id);
+                    matrix_show(H);
+                    printf("mul\n");
+                    matrix_show(new_merged);
+                    printf("equal\n");
+                    matrix_show(tmp_matrix);
+                }
+*/
                 matrix_free(new_merged);
                 int index[2] = {thread_id,thread_id+A->col};
         
@@ -91,6 +103,8 @@ int main (int argc, char* argv[])
                 matrix_free(tmp_matrix);
             }
         }
+      //  printf("showing the tile A\n");
+      //  show_tile_matrix(A);
     }
     show_tile_matrix(A);
 //#pragma omp parallel shared(A,H)
