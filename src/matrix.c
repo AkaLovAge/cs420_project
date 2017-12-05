@@ -332,23 +332,17 @@ void get_QR(mat *m, mat **H, mat **Q)
    //         printf("%f,",n_col[j]);
    //     printf("\n");
         n_norm = vnorm(n_col,row);
-        n_norm = (m->m[i][i]<0) ? -n_norm : n_norm;
+        n_norm = (n_col[i]<0) ? -n_norm : n_norm;
 
         for(j=0; j<row; j++) {e[j]=0;}
         e[i] = 1;
         vector_mul(e,n_norm, row);
         vector_add(n_col,e,row);
-        
         n_norm = vnorm(n_col,row);
         vector_mul(n_col, (double)1/n_norm, row);
-  //      printf("n\n");
- //       for (j=0;j<row;j++)
- //           printf("%f,",n_col[j]);
-
-   //     printf("\n");
 
         q[i] = I_mul(n_col, row);
-  //      matrix_show(q[i]);   
+      //  matrix_show(q[i]);   
         tmp2 = matrix_mul2(q[i],tmp1);
         free(n_col);
     
@@ -385,7 +379,7 @@ void matrix_show(mat *m)
     {
         for(j=0;j<m->col;j++)
         {
-            printf("%.12f,",m->m[i][j]);
+            printf("%.20f,",m->m[i][j]);
         }
         printf("\n");
     }

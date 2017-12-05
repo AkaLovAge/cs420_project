@@ -97,7 +97,7 @@ void matrix2tiled(mat_tile* m, double** rm )
 
     for (i=0;i<m->num;i++)
     {
-        tmp1 = (i%m->row)*m->sub_row;
+        tmp1 = (i/m->row)*m->sub_row;
         tmp2 = (i%m->col)*m->sub_col;
         for (j=0; j<m->sub_row;j++)
         {

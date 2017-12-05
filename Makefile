@@ -1,8 +1,8 @@
 SHELL=/bin/bash
 
 # Matrix dimensions
-M=128
-N=128
+M=8
+N=8
 
 CC=mpicc
 
@@ -43,7 +43,8 @@ ACT_INCLUDE_TAG=-I$(INCLUDE_DIR)
 
 all: $(BIN_DIR)/mpi_householder \
 	$(BIN_DIR)/householder \
-	$(BIN_DIR)/2d_omp
+	$(BIN_DIR)/2d_omp \
+	$(BIN_DIR)/4b4_omp
 
 $(OBJ_DIR)/%.o:$(SRC_DIR)/%.c
 	$(CC) -c $< -o $@ $(ACT_INCLUDE_TAG)
@@ -55,6 +56,9 @@ $(BIN_DIR)/mpi_householder: $(TEST_DIR)/mpi_householder.c $(OBJS)
 	$(CC) $^ -o $@ $(cc_PROG_ARGS) $(ACT_INCLUDE_TAG)
 
 $(BIN_DIR)/2d_omp: $(TEST_DIR)/2d_omp.c $(OBJS)
+	$(CC) $^ -o $@ $(cc_PROG_ARGS) $(ACT_INCLUDE_TAG) $(OPENMP_FLAG)
+
+$(BIN_DIR)/4b4_omp: $(TEST_DIR)/4b4_omp.c $(OBJS)
 	$(CC) $^ -o $@ $(cc_PROG_ARGS) $(ACT_INCLUDE_TAG) $(OPENMP_FLAG)
 
 clean:
