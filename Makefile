@@ -1,8 +1,8 @@
 SHELL=/bin/bash
 
 # Matrix dimensions
-M=8
-N=8
+M=32
+N=32
 
 CC=mpicc
 

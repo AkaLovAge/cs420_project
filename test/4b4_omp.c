@@ -38,13 +38,14 @@ int main (int argc, char* argv[])
     int remain = tile_n+1;
     int thread1,thread2;
     
-   // for (i=0; i<tile_n && i<tile_m; i++)
-   // {
-    i=0;
+    for (i=0; i<tile_n && i<tile_m; i++)
+    {
         remain -= 1;
         omp_set_nested(1);
-        omp_set_num_threads((int)(ceil(remain/2)));
+        omp_set_num_threads((int)ceil(remain/(double)2));
         
+        printf("loop %d , remain:%d , threads num:%d\n",i,remain,(int)(ceil(remain/2)));
+
         #pragma omp parallel shared(A)
         {
             int thread_num,thread_id;
@@ -56,19 +57,23 @@ int main (int argc, char* argv[])
 
             get_QR(A->m[thread_id*8 + i+i*tile_m] , &H, &Q);
 
-            omp_set_num_threads(tile_m - i);
+            omp_set_num_threads(remain);
             #pragma omp parallel shared(A,H)
             {
                 int sub_num,sub_id;
                 sub_id = omp_get_thread_num();
                 sub_num = omp_get_num_threads();
                 
-                mat * tmp_matrix = matrix_mul2(H , A->m[thread_id*8+i+sub_id]);
+                mat * tmp_matrix = matrix_mul2(H , A->m[thread_id*8+i+i*4+sub_id]);
+               #pragma omp critical
+               {
+                   printf("This is thread %d working on %d\n",sub_id,thread_id*8+i+i*4+sub_id);
+               }
                 matrix_free(A->m[thread_id*8+i+sub_id]);
                 A->m[thread_id*8+i+sub_id] = tmp_matrix;
             }
 
-            #pragma omp barrier
+            //#pragma omp barrier
             matrix_free(H);
 
             if (i+(thread_id+1)*2 <= tile_n)
@@ -78,12 +83,16 @@ int main (int argc, char* argv[])
                 matrix_free(merged);
                 omp_set_num_threads(tile_m - i);
                 
-                #pragma omp parallel shared(A,H)
+                #pragma omp parallel shared(A,H,i)
                 {
                     int sub_num,sub_id;
                     sub_id = omp_get_thread_num();
                     sub_num = omp_get_num_threads();
 
+                    #pragma omp critical
+                    {
+                        printf("this is thread %d mul on two %d,%d\n",sub_id,thread_id*8+i+i*tile_m+sub_id, thread_id*8+i+i*tile_m+sub_id+4);
+                    }
                     mat* new_merged = tile_merge(A, thread_id*8+i+i*tile_m+sub_id, thread_id*8+i+i*tile_m+sub_id+4);
                     mat* tmp_matrix = matrix_mul2(H, new_merged);
 
@@ -95,9 +104,43 @@ int main (int argc, char* argv[])
                     matrix_free(tmp_matrix);
 
                 }
+                matrix_free(H);
             }
-
+            #pragma omp barrier
         }
-        show_tile_matrix(A);
-    //}
+        if (remain>2)
+        {
+            mat* H;
+            mat* Q;
+
+            mat* merged = tile_merge(A, i*4+i,i*4+i+8);
+            get_QR(merged, &H, &Q);
+            matrix_free(merged);
+            omp_set_num_threads(remain);
+
+            #pragma omp parallel shared(A,H,i)
+            {
+                int thread_id, thread_num;
+                thread_id = omp_get_thread_num();
+                thread_num = omp_get_num_threads();
+                mat* new_merged = tile_merge(A,i*4+i+thread_id,i*4+i+8+thread_id);
+                mat* tmp_matrix = matrix_mul2(H, new_merged);
+
+                matrix_free(new_merged);
+                int index[2] = {i*4+i+thread_id,i*4+i+8+thread_id};
+                #pragma omp critical 
+                {
+                    printf("This is thread %d, mul on two %d,%d\n",thread_id,i*4+i+thread_id,i*4+i+8+thread_id);
+                }
+                set_mul_value(A,tmp_matrix,index,2);
+
+                matrix_free(tmp_matrix);
+            }
+            #pragma omp barrier
+            matrix_free(H);
+        }
+       
+    }
+    show_tile_matrix(A);
+    return 1;
 }

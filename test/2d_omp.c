@@ -64,13 +64,9 @@ int main (int argc, char* argv[])
                 matrix_show(H);
                 printf("\n");
             }*/
-            printf("befroe\n");
-            show_tile_matrix(A);
             mat* tmp_matrix = matrix_mul2(H,A->m[i*(A->col)+i+thread_id]);
             matrix_free(A->m[i*(A->col)+i+thread_id]);
             A->m[i*(A->col)+i+thread_id] = tmp_matrix;
-            printf("after\n");
-            show_tile_matrix(A);
         }
         matrix_free(H);
 
@@ -94,7 +90,7 @@ int main (int argc, char* argv[])
         
                 mat* new_merged = tile_merge(A,thread_id,thread_id+A->col);
                 mat* tmp_matrix = matrix_mul2(H,new_merged);
-                #pragma omp critical
+              /*  #pragma omp critical
                 {
                     printf ("this is thread %d\n",thread_id);
                     matrix_show(H);
@@ -103,7 +99,7 @@ int main (int argc, char* argv[])
                     printf("equal\n");
                     matrix_show(tmp_matrix);
                 }
-
+*/
                 matrix_free(new_merged);
                 int index[2] = {thread_id,thread_id+A->col};
         
