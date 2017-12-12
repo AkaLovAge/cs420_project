@@ -138,10 +138,10 @@ void matrix_add(mat* a, mat* b)
     }                                                       
 }
 // mat a = mat a * mat b
-/*void matrix_mul(mat *a, mat *b)
+void matrix_mul(mat *a, mat *b)
 {
     int i,j,k;
-    mat* result = matrix_init(input1->row,input2->col);
+    mat* result = matrix_init(a->row,b->col);
     if (a->col == b->row)
     {
          for (i=0;i<a->row;i++)
@@ -151,14 +151,14 @@ void matrix_add(mat* a, mat* b)
                  double tmp = 0;
                  for(k=0;k<b->col;k++)
                  {
-                     tmp = tmp + (input1->m[i][k])*(input2->m[k][j]);
+                     tmp = tmp + (a->m[i][k])*(b->m[k][j]);
                  }
                  result->m[i][j] = tmp;
              }
         }
     }
 }
-*/
+
 // regular mat a * mat b
 mat* matrix_mul2(mat* input1, mat* input2)
 {

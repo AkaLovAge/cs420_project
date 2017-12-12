@@ -1,8 +1,8 @@
 SHELL=/bin/bash
 
 # Matrix dimensions
-M=32
-N=32
+M=64
+N=64
 
 CC=mpicc
 
@@ -41,19 +41,18 @@ cc_PROG_ARGS=$(COMMON_PROG_ARGS)
 #Include tage 
 ACT_INCLUDE_TAG=-I$(INCLUDE_DIR)
 
-all: $(BIN_DIR)/mpi_householder \
-	$(BIN_DIR)/householder \
-	$(BIN_DIR)/2d_omp \
-	$(BIN_DIR)/4b4_omp
+all:$(BIN_DIR)/2d_omp \
+	$(BIN_DIR)/4b4_omp \
+	$(BIN_DIR)/nbn
 
 $(OBJ_DIR)/%.o:$(SRC_DIR)/%.c
 	$(CC) -c $< -o $@ $(ACT_INCLUDE_TAG)
 
-$(BIN_DIR)/householder: $(TEST_DIR)/householder.c $(OBJS)
-	$(CC) $^ -o $@ $(cc_PROG_ARGS) $(ACT_INCLUDE_TAG)
+#$(BIN_DIR)/householder: $(TEST_DIR)/householder.c $(OBJS)
+#	$(CC) $^ -o $@
 
-$(BIN_DIR)/mpi_householder: $(TEST_DIR)/mpi_householder.c $(OBJS)
-	$(CC) $^ -o $@ $(cc_PROG_ARGS) $(ACT_INCLUDE_TAG)
+$(BIN_DIR)/nbn: $(TEST_DIR)/nbn.c $(OBJS)
+	$(CC) $^ -o $@ $(cc_PROG_ARGS) $(ACT_INCLUDE_TAG) $(OPENMP_FLAG)
 
 $(BIN_DIR)/2d_omp: $(TEST_DIR)/2d_omp.c $(OBJS)
 	$(CC) $^ -o $@ $(cc_PROG_ARGS) $(ACT_INCLUDE_TAG) $(OPENMP_FLAG)
